@@ -1,0 +1,58 @@
+module spi_rx_tb;
+
+reg clk;
+reg rst;
+reg sclk;
+reg cs;
+reg mosi;
+
+wire [7:0] rx_data;
+wire rx_done;
+
+spi_rx dut (
+.clk(clk),
+.rst(rst),
+.sclk(sclk),
+.cs(cs),
+.mosi(mosi),
+.rx_data(rx_data),
+.rx_done(rx_done)
+);
+
+/* system clock */
+initial begin
+clk = 0;
+forever #5 clk = ~clk;
+end
+
+initial begin
+rst  = 1;
+sclk = 0;
+cs   = 1;
+mosi = 0;
+
+#50;
+rst = 0;
+
+/* START SPI */
+cs = 0;
+
+/* send 8-bit data : 1010_1001 (MSB first) */
+
+mosi = 1; #20; sclk = 1; #20; sclk = 0;
+mosi = 0; #20; sclk = 1; #20; sclk = 0;
+mosi = 1; #20; sclk = 1; #20; sclk = 0;
+mosi = 0; #20; sclk = 1; #20; sclk = 0;
+mosi = 1; #20; sclk = 1; #20; sclk = 0;
+mosi = 0; #20; sclk = 1; #20; sclk = 0;
+mosi = 0; #20; sclk = 1; #20; sclk = 0;
+mosi = 1; #20; sclk = 1; #20; sclk = 0;
+
+/* STOP SPI */
+cs = 1;
+
+#200;
+$finish;
+end
+
+endmodule
