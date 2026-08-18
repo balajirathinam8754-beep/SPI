@@ -1,0 +1,14 @@
+class spi_rx_sequencer extends uvm_sequencer #(spi_rx_sequence_item);
+
+    `uvm_component_utils(spi_rx_sequencer)
+
+    function new(
+        string name = "spi_rx_sequencer",
+        uvm_component parent = null
+    );
+
+        super.new(name, parent);
+
+    endfunction
+
+endclass
