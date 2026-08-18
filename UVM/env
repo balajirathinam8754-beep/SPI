@@ -1,0 +1,50 @@
+class spi_rx_env extends uvm_env;
+
+    `uvm_component_utils(spi_rx_env)
+
+    spi_rx_agent      agent;
+    spi_rx_scoreboard scoreboard;
+
+
+    function new(
+        string name = "spi_rx_env",
+        uvm_component parent = null
+    );
+
+        super.new(name, parent);
+
+    endfunction
+
+
+    function void build_phase(uvm_phase phase);
+
+        super.build_phase(phase);
+
+        agent =
+            spi_rx_agent::type_id::create(
+                "agent",
+                this
+            );
+
+        scoreboard =
+            spi_rx_scoreboard::type_id::create(
+                "scoreboard",
+                this
+            );
+
+        agent.is_active = UVM_ACTIVE;
+
+    endfunction
+
+
+    function void connect_phase(uvm_phase phase);
+
+        super.connect_phase(phase);
+
+        agent.monitor.analysis_port.connect(
+            scoreboard.analysis_export
+        );
+
+    endfunction
+
+endclass
