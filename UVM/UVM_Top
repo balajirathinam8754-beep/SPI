@@ -1,0 +1,78 @@
+module tb_top;
+
+    logic clk;
+
+    spi_rx_if vif(clk);
+
+
+    // =====================================================
+    // DUT
+    // =====================================================
+
+    spi_rx dut (
+
+        .clk     (clk),
+        .rst     (vif.rst),
+
+        .sclk    (vif.sclk),
+        .cs      (vif.cs),
+        .mosi    (vif.mosi),
+
+        .rx_data (vif.rx_data),
+        .rx_done (vif.rx_done)
+
+    );
+
+
+    // =====================================================
+    // SYSTEM CLOCK
+    // =====================================================
+
+    initial begin
+
+        clk = 1'b0;
+
+        forever
+            #5 clk = ~clk;
+
+    end
+
+
+    // =====================================================
+    // INITIAL VALUES
+    // =====================================================
+
+    initial begin
+
+        vif.rst  = 1'b1;
+        vif.sclk = 1'b0;
+        vif.cs   = 1'b1;
+        vif.mosi = 1'b0;
+
+        #50;
+
+        vif.rst = 1'b0;
+
+    end
+
+
+    // =====================================================
+    // UVM CONFIGURATION
+    // =====================================================
+
+    initial begin
+
+        uvm_config_db#(
+            virtual spi_rx_if
+        )::set(
+            null,
+            "*",
+            "vif",
+            vif
+        );
+
+        run_test("spi_rx_test");
+
+    end
+
+endmodule
