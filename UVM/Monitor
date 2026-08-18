@@ -1,0 +1,79 @@
+class spi_rx_monitor extends uvm_monitor;
+
+    `uvm_component_utils(spi_rx_monitor)
+
+    virtual spi_rx_if vif;
+
+    uvm_analysis_port #(spi_rx_sequence_item) analysis_port;
+
+
+    function new(
+        string name = "spi_rx_monitor",
+        uvm_component parent = null
+    );
+
+        super.new(name, parent);
+
+        analysis_port =
+            new("analysis_port", this);
+
+    endfunction
+
+
+    function void build_phase(uvm_phase phase);
+
+        super.build_phase(phase);
+
+        if (!uvm_config_db#(virtual spi_rx_if)::get(
+                this,
+                "",
+                "vif",
+                vif
+            )) begin
+
+            `uvm_fatal(
+                "NOVIF",
+                "SPI virtual interface not found"
+            )
+
+        end
+
+    endfunction
+
+
+    virtual task run_phase(uvm_phase phase);
+
+        spi_rx_sequence_item item;
+
+        forever begin
+
+            @(posedge vif.clk);
+
+            if (vif.rx_done) begin
+
+                item =
+                    spi_rx_sequence_item::type_id::create(
+                        "item"
+                    );
+
+                item.received_data =
+                    vif.rx_data;
+
+                analysis_port.write(item);
+
+                `uvm_info(
+                    "SPI_MONITOR",
+                    $sformatf(
+                        "Received SPI data = %8b",
+                        vif.rx_data
+                    ),
+                    UVM_MEDIUM
+                )
+
+            end
+
+        end
+
+    endtask
+
+endclass
