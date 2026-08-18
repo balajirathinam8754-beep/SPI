@@ -1,0 +1,23 @@
+class spi_rx_sequence extends uvm_sequence #(spi_rx_sequence_item);
+
+    `uvm_object_utils(spi_rx_sequence)
+
+    function new(string name = "spi_rx_sequence");
+        super.new(name);
+    endfunction
+
+    virtual task body();
+
+        spi_rx_sequence_item req;
+
+        req = spi_rx_sequence_item::type_id::create("req");
+
+        start_item(req);
+
+        req.data = 8'b1010_1001;
+
+        finish_item(req);
+
+    endtask
+
+endclass
