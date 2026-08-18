@@ -1,0 +1,11 @@
+interface spi_rx_if(input logic clk);
+
+    logic rst;
+    logic sclk;
+    logic cs;
+    logic mosi;
+
+    logic [7:0] rx_data;
+    logic       rx_done;
+
+endinterface
