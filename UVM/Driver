@@ -1,0 +1,94 @@
+class spi_rx_driver extends uvm_driver #(spi_rx_sequence_item);
+
+    `uvm_component_utils(spi_rx_driver)
+
+    virtual spi_rx_if vif;
+
+    function new(
+        string name = "spi_rx_driver",
+        uvm_component parent = null
+    );
+
+        super.new(name, parent);
+
+    endfunction
+
+
+    function void build_phase(uvm_phase phase);
+
+        super.build_phase(phase);
+
+        if (!uvm_config_db#(virtual spi_rx_if)::get(
+                this,
+                "",
+                "vif",
+                vif
+            )) begin
+
+            `uvm_fatal(
+                "NOVIF",
+                "SPI virtual interface not found"
+            )
+
+        end
+
+    endfunction
+
+
+    virtual task run_phase(uvm_phase phase);
+
+        spi_rx_sequence_item req;
+
+        forever begin
+
+            seq_item_port.get_next_item(req);
+
+            drive_spi(req.data);
+
+            seq_item_port.item_done();
+
+        end
+
+    endtask
+
+
+    task drive_spi(input bit [7:0] data);
+
+        int i;
+
+        // Start SPI transaction
+        vif.cs   <= 1'b0;
+        vif.sclk <= 1'b0;
+
+        // Small setup time
+        #20;
+
+        // MSB first
+        for (i = 7; i >= 0; i = i - 1) begin
+
+            vif.mosi <= data[i];
+
+            #20;
+
+            // Rising edge of SPI clock
+            vif.sclk <= 1'b1;
+
+            #20;
+
+            // Falling edge
+            vif.sclk <= 1'b0;
+
+        end
+
+        // Stop SPI
+        vif.mosi <= 1'b0;
+
+        #20;
+
+        vif.cs <= 1'b1;
+
+        #20;
+
+    endtask
+
+endclass
