@@ -1,0 +1,26 @@
+package spi_rx_pkg;
+
+    import uvm_pkg::*;
+
+    `include "uvm_macros.svh"
+
+
+    `include "../tb/sequence_item/spi_rx_sequence_item.sv"
+
+    `include "../tb/sequences/spi_rx_sequence.sv"
+
+    `include "../tb/sequencer/spi_rx_sequencer.sv"
+
+    `include "../tb/driver/spi_rx_driver.sv"
+
+    `include "../tb/monitor/spi_rx_monitor.sv"
+
+    `include "../tb/scoreboard/spi_rx_scoreboard.sv"
+
+    `include "../tb/agent/spi_rx_agent.sv"
+
+    `include "../tb/env/spi_rx_env.sv"
+
+    `include "../tb/test/spi_rx_test.sv"
+
+endpackage
